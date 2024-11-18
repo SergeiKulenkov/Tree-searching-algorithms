@@ -1,24 +1,38 @@
 #pragma once
+#include <concepts>
+#include <type_traits>
 
+template<typename T>
+concept Numeric = (std::is_integral_v<T> || std::is_floating_point_v<T>) && !std::is_same_v<T, bool>;
+
+template<typename T>
 class Node
 {
 public:
-    Node();
+    Node() : value(0), left(nullptr), right(nullptr)
+    {
+        static_assert(Numeric<T>, "only numbers are allowed.");
+    }
 
-    Node(int newValue);
+    Node(T newValue) : value(newValue), left(nullptr), right(nullptr)
+    {
+        static_assert(Numeric<T>, "only numbers are allowed.");
+    }
 
-    Node* GetLeft();
-    Node* GetRight();
+    Node* GetLeft() const { return left; }
 
-    void SetLeft(Node* newLeft);
-    void SetRight(Node* newRight);
+    Node* GetRight() const { return right; }
 
-    int GetValue();
-    void SetValue(int newValue);
+    void SetLeft(Node* newLeft) { left = newLeft; }
+
+    void SetRight(Node* newRight) { right = newRight; }
+
+    int GetValue() const { return value; }
+
+    void SetValue(const int newValue) { value = newValue; }
 
 private:
-    int value;
+    T value;
     Node* left;
     Node* right;
 };
-

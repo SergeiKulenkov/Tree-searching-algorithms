@@ -1,11 +1,9 @@
 #pragma once
-#include <concepts>
-#include <type_traits>
 
 template<typename T>
 concept Numeric = (std::is_integral_v<T> || std::is_floating_point_v<T>) && !std::is_same_v<T, bool>;
 
-template<typename T>
+template<Numeric T>
 class Node
 {
 public:

@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include "Tree/Node.h"
 #include "Tree/Algorithms.h"
 

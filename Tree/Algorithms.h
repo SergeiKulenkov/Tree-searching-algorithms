@@ -86,7 +86,7 @@ namespace Algorithms
 
     // just uses BFS and exits when the target is found
     template<Numeric T>
-    bool TreeIncludes(Node<T>* root, int target)
+    bool TreeIncludes(Node<T>* root, T target)
     {
         bool includes = false;
 
@@ -122,9 +122,9 @@ namespace Algorithms
 
     // also can be done using BFS and just adding to sum
     template<Numeric T>
-    int TreeSum(Node<T>* root)
+    T TreeSum(Node<T>* root)
     {
-        int sum = 0;
+        T sum = 0;
         if (root != nullptr)
         {
             sum += root->GetValue();
@@ -137,9 +137,9 @@ namespace Algorithms
 
     // DFS version, can also be done using BFS
     template<Numeric T>
-    int TreeMinValue(Node<T>* root)
+    T TreeMinValue(Node<T>* root)
     {
-        int minValue = INT_MAX;
+        T minValue = INT_MAX;
         if (root != nullptr)
         {
             Node<T>* current;
@@ -170,13 +170,13 @@ namespace Algorithms
     }
 
     template<Numeric T>
-    int TreeMinValueRecursive(Node<T>* node)
+    T TreeMinValueRecursive(Node<T>* node)
     {
-        int minValue = INT_MAX;
+        T minValue = INT_MAX;
         if (node != nullptr)
         {
-            const int leftMin = TreeMinValueRecursive(node->GetLeft());
-            const int rightMin = TreeMinValueRecursive(node->GetRight());
+            const T leftMin = TreeMinValueRecursive(node->GetLeft());
+            const T rightMin = TreeMinValueRecursive(node->GetRight());
             minValue = std::min({ node->GetValue(), leftMin, rightMin });
         }
 
@@ -184,9 +184,9 @@ namespace Algorithms
     }
 
     template<Numeric T>
-    int TreeMaxPathSum(Node<T>* node)
+    T TreeMaxPathSum(Node<T>* node)
     {
-        int sum = 0;
+        T sum = 0;
         if (node != nullptr)
         {
             if ((node->GetLeft() == nullptr) &&

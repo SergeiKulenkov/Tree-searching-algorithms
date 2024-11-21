@@ -27,9 +27,9 @@ public:
 
     void SetRight(Node* newRight) { right = newRight; }
 
-    int GetValue() const { return value; }
+    T GetValue() const { return value; }
 
-    void SetValue(const int newValue) { value = newValue; }
+    void SetValue(const T newValue) { value = newValue; }
 
 private:
     T value;

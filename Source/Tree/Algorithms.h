@@ -9,14 +9,14 @@
 namespace Algorithms
 {
     template<Numeric T>
-    std::vector<Node<T>*> DepthFirstSearchRecursive(Node<T>* node)
+    std::vector<T> DepthFirstSearchRecursive(Node<T>* node)
     {
-        std::vector<Node<T>*> result;
+        std::vector<T> result;
         if (node != nullptr)
         {
-            result.push_back(node);
-            std::vector<Node<T>*> left = DepthFirstSearchRecursive(node->GetLeft());
-            std::vector<Node<T>*> right = DepthFirstSearchRecursive(node->GetRight());
+            result.push_back(node->GetValue());
+            std::vector<T> left = DepthFirstSearchRecursive(node->GetLeft());
+            std::vector<T> right = DepthFirstSearchRecursive(node->GetRight());
             result.insert(result.end(), left.begin(), left.end());
             result.insert(result.end(), right.begin(), right.end());
         }
@@ -25,9 +25,9 @@ namespace Algorithms
     }
 
     template<Numeric T>
-    std::vector<Node<T>*> DepthFirstSearchIterative(Node<T>* root)
+    std::vector<T> DepthFirstSearchIterative(Node<T>* root)
     {
-        std::vector<Node<T>*> result;
+        std::vector<T> result;
         if (root != nullptr)
         {
             Node<T>* current;
@@ -38,7 +38,7 @@ namespace Algorithms
             {
                 current = stack.top();
                 stack.pop();
-                result.push_back(current);
+                result.push_back(current->GetValue());
 
                 if (current->GetRight() != nullptr)
                 {
@@ -55,9 +55,9 @@ namespace Algorithms
     }
 
     template<Numeric T>
-    std::vector<Node<T>*> BreadthFirstSearch(Node<T>* root)
+    std::vector<T> BreadthFirstSearch(Node<T>* root)
     {
-        std::vector<Node<T>*> result;
+        std::vector<T> result;
         if (root != nullptr)
         {
             Node<T>* current;
@@ -68,7 +68,7 @@ namespace Algorithms
             {
                 current = q.front();
                 q.pop();
-                result.push_back(current);
+                result.push_back(current->GetValue());
 
                 if (current->GetLeft() != nullptr)
                 {
@@ -139,7 +139,7 @@ namespace Algorithms
     template<Numeric T>
     T TreeMinValue(Node<T>* root)
     {
-        T minValue = INT_MAX;
+        T minValue = static_cast<T>(INT_MAX);
         if (root != nullptr)
         {
             Node<T>* current;
@@ -172,7 +172,7 @@ namespace Algorithms
     template<Numeric T>
     T TreeMinValueRecursive(Node<T>* node)
     {
-        T minValue = INT_MAX;
+        T minValue = static_cast<T>(INT_MAX);
         if (node != nullptr)
         {
             const T leftMin = TreeMinValueRecursive(node->GetLeft());
@@ -199,11 +199,21 @@ namespace Algorithms
                 sum += node->GetValue() + std::max(TreeMaxPathSum(node->GetLeft()), TreeMaxPathSum(node->GetRight()));
             }
         }
-        else
-        {
-            sum = INT_MAX * (-1);
-        }
 
         return sum;
+    }
+
+    // fast recursive version
+    template<Numeric T>
+    uint16_t MaxDepth(Node<T>* node)
+    {
+        if (node != nullptr)
+        {
+            return 1 + std::max(MaxDepth(node->GetLeft()), MaxDepth(node->GetRight()));
+        }
+        else
+        {
+            return 0;
+        }
     }
 }

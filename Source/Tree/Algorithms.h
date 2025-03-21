@@ -139,9 +139,10 @@ namespace Algorithms
     template<Numeric T>
     T TreeMinValue(Node<T>* root)
     {
-        T minValue = static_cast<T>(INT_MAX);
+        T minValue = 0;
         if (root != nullptr)
         {
+            minValue = root->GetValue();
             Node<T>* current;
             std::stack<Node<T>*> stack;
             stack.push(root);

@@ -7,7 +7,7 @@
 template<Numeric T>
 void Print(const std::vector<T>& values)
 {
-    for (const T value : values)
+    for (const T& value : values)
     {
         std::cout << static_cast<unsigned>(value) << " ";
     }
@@ -37,9 +37,9 @@ int main()
     std::cout << "BFS: \n";
     Print(Algorithms::BreadthFirstSearch(root));
 
-    // test values
-    const uint8_t target1 = 5;
-    const uint8_t target2 = 55;
+    // testing
+    constexpr uint8_t target1 = 5;
+    constexpr uint8_t target2 = 55;
     std::cout << "Tree includes " << target1 << " - " << (Algorithms::TreeIncludes(root, target1) ? "true" : "false") << '\n';
     std::cout << "Tree includes " << target2 << " - " << (Algorithms::TreeIncludes(root, target2) ? "true" : "false") << '\n';
 

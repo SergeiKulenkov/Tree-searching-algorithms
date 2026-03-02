@@ -37,7 +37,17 @@ int main()
     std::cout << "BFS: \n";
     Print(Algorithms::BreadthFirstSearch(root));
 
+    std::cout << "Inorder: \n";
+    Print(Algorithms::InorderTraversal(root));
+
+    std::cout << "Preorder: \n";
+    Print(Algorithms::PreorderTraversal(root));
+
+    std::cout << "Postorder: \n";
+    Print(Algorithms::PostorderTraversal(root));
+
     // testing
+    std::cout << "\n";
     constexpr uint8_t target1 = 5;
     constexpr uint8_t target2 = 55;
     std::cout << "Tree includes " << target1 << " - " << (Algorithms::TreeIncludes(root, target1) ? "true" : "false") << '\n';

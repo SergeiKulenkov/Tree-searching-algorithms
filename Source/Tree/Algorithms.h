@@ -84,6 +84,78 @@ namespace Algorithms
         return result;
     }
 
+    // useful to get values in the original order
+    template<Numeric T>
+    std::vector<T> InorderTraversal(Node<T>* node)
+    {
+        std::vector<T> result;
+        if (node != nullptr)
+        {
+            std::vector<T> left = InorderTraversal(node->GetLeft());
+            if (!left.empty())
+            {
+                result.insert(result.end(), left.begin(), left.end());
+            }
+
+            result.emplace_back(node->GetValue());
+            std::vector<T> right = InorderTraversal(node->GetRight());
+            if (!right.empty())
+            {
+                result.insert(result.end(), right.begin(), right.end());
+            }
+        }
+
+        return result;
+    }
+
+    // useful to get root values first, then the leaves
+    template<Numeric T>
+    std::vector<T> PreorderTraversal(Node<T>* node)
+    {
+        std::vector<T> result;
+        if (node != nullptr)
+        {
+            result.emplace_back(node->GetValue());
+            std::vector<T> left = PreorderTraversal(node->GetLeft());
+            if (!left.empty())
+            {
+                result.insert(result.end(), left.begin(), left.end());
+            }
+
+            std::vector<T> right = PreorderTraversal(node->GetRight());
+            if (!right.empty())
+            {
+                result.insert(result.end(), right.begin(), right.end());
+            }
+        }
+
+        return result;
+    }
+
+    // useful to get leaves first, then the roots
+    template<Numeric T>
+    std::vector<T> PostorderTraversal(Node<T>* node)
+    {
+        std::vector<T> result;
+        if (node != nullptr)
+        {
+            std::vector<T> left = PostorderTraversal(node->GetLeft());
+            if (!left.empty())
+            {
+                result.insert(result.end(), left.begin(), left.end());
+            }
+
+            std::vector<T> right = PostorderTraversal(node->GetRight());
+            if (!right.empty())
+            {
+                result.insert(result.end(), right.begin(), right.end());
+            }
+            result.emplace_back(node->GetValue());
+        }
+
+        return result;
+    }
+
     // just uses BFS and exits when the target is found
     template<Numeric T>
     bool TreeIncludes(Node<T>* root, T target)

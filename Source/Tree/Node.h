@@ -7,15 +7,9 @@ template<Numeric T>
 class Node
 {
 public:
-    Node() : value(0), left(nullptr), right(nullptr)
-    {
-        static_assert(Numeric<T>, "only numbers are allowed.");
-    }
+    Node() : value(0), left(nullptr), right(nullptr) {}
 
-    Node(T newValue) : value(newValue), left(nullptr), right(nullptr)
-    {
-        static_assert(Numeric<T>, "only numbers are allowed.");
-    }
+    Node(const T newValue) : value(newValue), left(nullptr), right(nullptr) {}
 
     Node* GetLeft() const { return left; }
 

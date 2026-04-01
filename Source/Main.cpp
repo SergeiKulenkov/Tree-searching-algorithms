@@ -117,7 +117,26 @@ void DestroyTree(Node<T>** root)
 {
     if (root != nullptr && *root != nullptr)
     {
+        Node<T>* current = nullptr;
+        std::queue<Node<T>*> order;
+        order.push(*root);
 
+        while (!order.empty())
+        {
+            current = order.front();
+            order.pop();
+
+            if (current->GetLeft() != nullptr)
+            {
+                order.push(current->GetLeft());
+            }
+            if (current->GetRight() != nullptr)
+            {
+                order.push(current->GetRight());
+            }
+
+            delete current;
+        }
     }
     else
     {
@@ -125,39 +144,34 @@ void DestroyTree(Node<T>** root)
     }
 }
 
-//////////////////////////////////////////
-
-int main()
+template<Numeric T>
+void TestDelete(Node<T>* root)
 {
-    constexpr TreeType node1 = 5;
-    Node<TreeType>* root = new Node<TreeType>(node1);
-    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "created root with value " << node1 << '\n';
-    else std::cout << "created root with value " << static_cast<unsigned>(node1) << '\n';
+    constexpr TreeType deleteTarget = 5;
+    if (Algorithms::DeleteNode<TreeType>(&root, deleteTarget))
+    {
+        if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "deleted node with value " << deleteTarget << '\n';
+        else std::cout << "deleted node with value " << static_cast<unsigned>(deleteTarget) << '\n';
+    }
+    else
+    {
+        if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "trying to delete, couldn't find a node with value " << deleteTarget << '\n';
+        else std::cout << "trying to delete, couldn't find a node with value " << static_cast<unsigned>(deleteTarget) << '\n';
+    }
+}
 
-    //CreateTestTree(&root);
-    CreateTestBST(&root);
-
-    //constexpr TreeType deleteTarget = 9;
-    //if (Algorithms::DeleteNode<TreeType>(&root, deleteTarget))
-    //{
-    //    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "deleted node with value " << deleteTarget << '\n';
-    //    else std::cout << "deleted node with value " << static_cast<unsigned>(deleteTarget) << '\n';
-    //}
-    //else
-    //{
-    //    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "couldn't find a node with value " << deleteTarget << '\n';
-    //    else std::cout << "couldn't find a node with value " << static_cast<unsigned>(deleteTarget) << '\n';
-    //}
-    
-    // traversing
-    std::cout << "\nRecursive DFS: \n";
-    Print(Algorithms::DepthFirstSearchRecursive(root));
+template<Numeric T>
+void TestTraversals(Node<T>* root)
+{
+    std::cout << '\n';
+    //std::cout << "Recursive DFS: \n";
+    //Print(Algorithms::DepthFirstSearchRecursive(root));
 
     std::cout << "Iterative DFS: \n";
     Print(Algorithms::DepthFirstSearchIterative(root));
 
-    std::cout << "BFS: \n";
-    Print(Algorithms::BreadthFirstSearch(root));
+    //std::cout << "BFS: \n";
+    //Print(Algorithms::BreadthFirstSearch(root));
 
     std::cout << "BFS with layers: \n";
     Algorithms::BreadthFirstSearchLayers(root);
@@ -170,8 +184,11 @@ int main()
 
     std::cout << "Postorder: \n";
     Print(Algorithms::PostorderTraversal(root));
+}
 
-    // testing
+template<Numeric T>
+void TestQueries(Node<T>* root)
+{
     std::cout << "\n";
     constexpr TreeType target1 = 5;
     constexpr TreeType target2 = 55;
@@ -180,31 +197,58 @@ int main()
     {
         std::cout << "BST includes " << static_cast<unsigned>(target1) << " - " << (Algorithms::BSTIncludes(root, target1) ? "true" : "false") << '\n';
         std::cout << "BST includes " << static_cast<unsigned>(target2) << " - " << (Algorithms::BSTIncludes(root, target2) ? "true" : "false") << '\n';
-    }
-    else
-    {
-        std::cout << "Tree includes " << target1 << " - " << (Algorithms::TreeIncludes(root, target1) ? "true" : "false") << '\n';
-        std::cout << "Tree includes " << target2 << " - " << (Algorithms::TreeIncludes(root, target2) ? "true" : "false") << '\n';
-    }
 
-    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "Tree sum = " << Algorithms::TreeSum(root) << '\n';
-    else std::cout << "Tree sum = " << static_cast<unsigned>(Algorithms::TreeSum(root)) << '\n';
+        std::cout << "Tree sum = " << static_cast<unsigned>(Algorithms::TreeSum(root)) << '\n';
 
-    if constexpr (std::is_same_v<TreeType, uint8_t>)
-    {
         std::cout << "Tree min value = " << static_cast<unsigned>(Algorithms::TreeMinValue(root)) << '\n';
-        std::cout << "Tree min value (recursive) = " << static_cast<unsigned>(Algorithms::TreeMinValueRecursive(root)) << '\n';
+        //std::cout << "Tree min value (recursive) = " << static_cast<unsigned>(Algorithms::TreeMinValueRecursive(root)) << '\n';
+
+        std::cout << "Tree max path sum = " << static_cast<unsigned>(Algorithms::TreeMaxPathSum(root)) << '\n';
     }
     else
     {
+        std::cout << "BST includes " << target1 << " - " << (Algorithms::BSTIncludes(root, target1) ? "true" : "false") << '\n';
+        std::cout << "BST includes " << target2 << " - " << (Algorithms::BSTIncludes(root, target2) ? "true" : "false") << '\n';
+
+        std::cout << "Tree sum = " << Algorithms::TreeSum(root) << '\n';
+
         std::cout << "Tree min value = " << Algorithms::TreeMinValue(root) << '\n';
-        std::cout << "Tree min value (recursive) = " << Algorithms::TreeMinValueRecursive(root) << '\n';
+        //std::cout << "Tree min value (recursive) = " << Algorithms::TreeMinValueRecursive(root) << '\n';
+
+        std::cout << "Tree max path sum = " << Algorithms::TreeMaxPathSum(root) << '\n';
     }
 
-    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "Tree max path sum = " << Algorithms::TreeMaxPathSum(root) << '\n';
-    else std::cout << "Tree max path sum = " << static_cast<unsigned>(Algorithms::TreeMaxPathSum(root)) << '\n';
-       
     std::cout << "Tree max depth = " << Algorithms::MaxDepth(root) << '\n';
 
+    Node<T>* inverted = Algorithms::GetInveredtTree(root);
+    std::cout << "layers of inverted:\n";
+    Algorithms::BreadthFirstSearchLayers(inverted);
+
+    std::cout << "is original the same as inverted - " << (Algorithms::IsSameTree(root, inverted) ? "true" : "false") << '\n';
+
+    std::cout << "right side view:\n";
+    Print(Algorithms::GetRightSideView(root));
+
+    DestroyTree(&inverted);
+}
+
+//////////////////////////////////////////
+
+int main()
+{
+    constexpr TreeType node1 = 5;
+    Node<TreeType>* root = new Node<TreeType>(node1);
+
+    if constexpr (!std::is_same_v<TreeType, uint8_t>) std::cout << "created root with value " << node1 << '\n';
+    else std::cout << "created root with value " << static_cast<unsigned>(node1) << '\n';
+
+    //CreateTestTree(&root);
+    CreateTestBST(&root);
+
+    //TestDelete(root);
+    TestTraversals(root);
+    TestQueries(root);
+
+    DestroyTree(&root);
     return 0;
 }

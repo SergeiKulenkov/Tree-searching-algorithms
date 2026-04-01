@@ -65,40 +65,77 @@ namespace Algorithms
         {
             Node<T>* current = *root;
             Node<T>* previous = nullptr;
+            // try to find the node with the target value
             while (current != nullptr)
             {
                 if (value < current->GetValue())
                 {
-                    if (current->GetLeft() != nullptr)
-                    {
-                        previous = current;
-                        current = current->GetLeft();
-                    }
+                    previous = current;
+                    current = current->GetLeft();
                 }
                 else if (value > current->GetValue())
                 {
-                    if (current->GetRight() != nullptr)
-                    {
-                        previous = current;
-                        current = current->GetRight();
-                    }
+                    previous = current;
+                    current = current->GetRight();
                 }
                 else
                 {
-                    const bool setLeft = (previous != nullptr && (value < previous->GetValue()));
-                    if (current->GetLeft() != nullptr)
-                    {
-                        if (setLeft) previous->SetLeft(current->GetLeft());
-                        else previous->SetRight(current->GetLeft());
-                    }
-                    else if (current->GetRight() != nullptr)
-                    {
-                        if (setLeft) previous->SetLeft(current->GetRight());
-                        else previous->SetRight(current->GetRight());
-                    }
-
                     found = true;
                     break;
+                }
+            }
+
+            // case 1 - deleting a leaf node
+            // case 2 - deleting a node with only one child node
+            // case 3 - deleting a node with two child nodes
+            if (found)
+            {
+                Node<T>* newCurrent = nullptr;
+                // current (node with the target value) has zero or only one child node
+                if (current->GetLeft() == nullptr || current->GetRight() == nullptr)
+                {
+                    if (current->GetLeft() == nullptr)
+                    {
+                        newCurrent = current->GetRight();
+                    }
+                    else newCurrent = current->GetLeft();
+
+                    if (previous == nullptr)
+                    {
+                        // trying to delete the root
+                        *root = newCurrent;
+                    }
+                    else
+                    {
+                        if (value < previous->GetValue())
+                        {
+                            previous->SetLeft(newCurrent);
+                        }
+                        else previous->SetRight(newCurrent);
+
+                        delete current;
+                    }
+                }
+                // two child nodes
+                else
+                {
+                    // find the inorder successor - smallest value in the right subtree
+                    previous = nullptr;
+                    newCurrent = current->GetRight();
+                    while (newCurrent->GetLeft() != nullptr)
+                    {
+                        previous = newCurrent;
+                        newCurrent = newCurrent->GetLeft();
+                    }
+
+                    if (previous != nullptr)
+                    {
+                        previous->SetLeft(newCurrent->GetRight());
+                    }
+                    else current->SetRight(newCurrent->GetRight());
+
+                    current->SetValue(newCurrent->GetValue());
+                    delete newCurrent;
                 }
             }
         }
@@ -159,22 +196,22 @@ namespace Algorithms
         if (root != nullptr)
         {
             const Node<T>* current;
-            std::queue<const Node<T>*> q;
-            q.push(root);
+            std::queue<const Node<T>*> order;
+            order.push(root);
 
-            while (q.size() > 0)
+            while (!order.empty())
             {
-                current = q.front();
-                q.pop();
+                current = order.front();
+                order.pop();
                 result.emplace_back(current->GetValue());
 
                 if (current->GetLeft() != nullptr)
                 {
-                    q.push(current->GetLeft());
+                    order.push(current->GetLeft());
                 }
                 if (current->GetRight() != nullptr)
                 {
-                    q.push(current->GetRight());
+                    order.push(current->GetRight());
                 }
             }
         }
@@ -182,6 +219,7 @@ namespace Algorithms
         return result;
     }
 
+    // returns the values in the BFS order but also prints them in layers
     template<Numeric T>
     std::vector<T> BreadthFirstSearchLayers(const Node<T>* root)
     {
@@ -346,6 +384,8 @@ namespace Algorithms
         return includes;
     }
 
+    // using BST concept where left < root, right > root
+    // so the search should be faster than the above BFS version
     template<Numeric T>
     bool BSTIncludes(const Node<T>* root, const T target)
     {
@@ -458,7 +498,6 @@ namespace Algorithms
         return sum;
     }
 
-    // fast recursive version
     template<Numeric T>
     uint32_t MaxDepth(const Node<T>* node)
     {
@@ -472,12 +511,93 @@ namespace Algorithms
     template<Numeric T>
     bool IsSameTree(const Node<T>* tree1, const Node<T>* tree2)
     {
-        
+        bool isSame = false;
+        if (tree1 != nullptr && tree2 != nullptr)
+        {
+            if (tree1->GetValue() == tree2->GetValue())
+            {
+                isSame = true && IsSameTree(tree1->GetRight(), tree2->GetRight()) && IsSameTree(tree1->GetLeft(), tree2->GetLeft());
+            }
+        }
+        else if (tree1 == nullptr && tree2 == nullptr)
+        {
+            isSame = true;
+        }
+
+        return isSame;
     }
 
     template<Numeric T>
-    Node<T>* InvertTree(const Node<T>* root)
+    Node<T>* GetInveredtTree(const Node<T>* root)
     {
-        
+        Node<T>* result = nullptr;
+        if (root != nullptr)
+        {
+            // clone the original tree
+            result = new Node<T>(root);
+            Node<T>* current = nullptr;
+            Node<T>* previous = nullptr;
+            std::queue<Node<T>*> order;
+            order.push(result);
+
+            while (!order.empty())
+            {
+                for (size_t i = order.size(); i > 0; i--)
+                {
+                    current = order.front();
+                    if (current != nullptr)
+                    {
+                        previous = current->GetLeft();
+                        current->SetLeft(current->GetRight());
+                        current->SetRight(previous);
+
+                        order.push(current->GetLeft());
+                        order.push(current->GetRight());
+                    }
+
+                    order.pop();
+                }
+            }
+        }
+
+        return result;
+    }
+
+    template<Numeric T>
+    std::vector<T> GetRightSideView(const Node<T>* root)
+    {
+        std::vector<T> result;
+        if (root != nullptr)
+        {
+            const Node<T>* current = nullptr;
+            const Node<T>* right = nullptr;
+            std::queue<const Node<T>*> order;
+            order.push(root);
+
+            while (!order.empty())
+            {
+                for (size_t i = order.size(); i > 0; i--)
+                {
+                    current = order.front();
+                    order.pop();
+
+                    if (current != nullptr)
+                    {
+                        // get the right most node of each layer
+                        right = current;
+                        order.push(current->GetLeft());
+                        order.push(current->GetRight());
+                    }
+                }
+
+                if (right != nullptr)
+                {
+                    result.emplace_back(right->GetValue());
+                }
+                right = nullptr;
+            }
+        }
+
+        return result;
     }
 }

@@ -10,9 +10,9 @@ public:
     Node() : value(0), left(nullptr), right(nullptr) {}
     ~Node() = default;
 
-    Node(const T newValue) : value(newValue), left(nullptr), right(nullptr) {}
+    explicit Node(const T newValue) : value(newValue), left(nullptr), right(nullptr) {}
 
-    Node(const Node* node)
+    explicit Node(const Node* node)
     {
         if (node != nullptr)
         {

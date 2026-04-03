@@ -226,7 +226,7 @@ namespace Algorithms
         std::vector<T> result;
         if (root != nullptr)
         {
-            bool allEmpty = true;
+            bool allNull = true;
             std::vector<const Node<T>*> currentLayer;
             currentLayer.reserve(maxTreeLayerSize);
             currentLayer.emplace_back(root);
@@ -240,12 +240,12 @@ namespace Algorithms
                 {
                     if (node != nullptr)
                     {
-                        allEmpty = false;
+                        allNull = false;
                         break;
                     }
                 }
 
-                if (allEmpty) break;
+                if (allNull) break;
 
                 for (const Node<T>* node : currentLayer)
                 {
@@ -269,7 +269,7 @@ namespace Algorithms
                 std::cout << '\n';
                 currentLayer.swap(nextLayer);
                 nextLayer.clear();
-                allEmpty = true;
+                allNull = true;
             }
         }
 
@@ -596,6 +596,71 @@ namespace Algorithms
                 }
                 right = nullptr;
             }
+        }
+
+        return result;
+    }
+
+    template<Numeric T>
+    bool ValidateBSTHelper(const Node<T>* node, const T low, const T high)
+    {
+        bool valid = true;
+        if (node != nullptr)
+        {
+            // each node in each subtree must be in a specific range
+            // for the left subtree it's (type_min, root), for the right it's (root, type_max)
+            if ((node->GetValue() > low) &&
+                (node->GetValue() < high))
+            {
+                valid = ValidateBSTHelper(node->GetLeft(), low, node->GetValue()) &&
+                        ValidateBSTHelper(node->GetRight(), node->GetValue(), high);
+            }
+            else valid = false;
+        }
+
+        return valid;
+    }
+
+    template<Numeric T>
+    bool ValidateBST(const Node<T>* root)
+    {
+        return ValidateBSTHelper(root, std::numeric_limits<T>::min(), std::numeric_limits<T>::max());
+    }
+
+    template<Numeric T>
+    Node<T>* ConstructHelper(const std::vector<T>& inorder, const std::vector<T>& preorder, const uint32_t leftLimit, uint32_t& inorderIndex, uint32_t& preorderIndex)
+    {
+        Node<T>* result = nullptr;
+        if ((preorderIndex < preorder.size()) &&
+            (inorderIndex < inorder.size()))
+        {
+            if (inorder[inorderIndex] != leftLimit)
+            {
+                result = new Node<T>(preorder[preorderIndex++]);
+                // use current node value because left subtree contains values less than this one
+                result->SetLeft(ConstructHelper(inorder, preorder, result->GetValue(), inorderIndex, preorderIndex));
+                result->SetRight(ConstructHelper(inorder, preorder, leftLimit, inorderIndex, preorderIndex));
+            }
+            else if (inorder[inorderIndex] == leftLimit)
+            {
+                // left subtree is done
+                inorderIndex++;
+            }
+        }
+
+        return result;
+    }
+
+    template<Numeric T>
+    Node<T>* Construct(const std::vector<T>& inorder, const std::vector<T>& preorder)
+    {
+        Node<T>* result = nullptr;
+        if (!preorder.empty() && !inorder.empty())
+        {
+            uint32_t preorderIndex = 0;
+            uint32_t inorderIndex = 0;
+
+            result = ConstructHelper(inorder, preorder, UINT32_MAX, inorderIndex, preorderIndex);
         }
 
         return result;

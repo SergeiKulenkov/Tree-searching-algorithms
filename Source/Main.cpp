@@ -2,9 +2,9 @@
 #include "Tree/Node.h"
 #include "Tree/Algorithms.h"
 
-//////////////////////////////////////////
-
 using TreeType = uint8_t;
+
+//////////////////////////////////////////
 
 template<Numeric T>
 void Print(const std::vector<T>& values)
@@ -176,20 +176,29 @@ void TestTraversals(Node<T>* root)
     std::cout << "BFS with layers: \n";
     Algorithms::BreadthFirstSearchLayers(root);
 
+    const std::vector<T> inorder = Algorithms::InorderTraversal(root);
     std::cout << "Inorder: \n";
-    Print(Algorithms::InorderTraversal(root));
+    Print(inorder);
 
+    const std::vector<T> preorder = Algorithms::PreorderTraversal(root);
     std::cout << "Preorder: \n";
-    Print(Algorithms::PreorderTraversal(root));
+    Print(preorder);
 
     std::cout << "Postorder: \n";
     Print(Algorithms::PostorderTraversal(root));
+
+    Node<T>* constructed = Algorithms::Construct(inorder, preorder);
+    std::cout << "\ncostructed from inorder and preorder:\n";
+    Algorithms::BreadthFirstSearchLayers(constructed);
+    std::cout << "is constructed a valid BST - " << (Algorithms::ValidateBST(constructed) ? "true" : "false");
+
+    DestroyTree(&constructed);
 }
 
 template<Numeric T>
 void TestQueries(Node<T>* root)
 {
-    std::cout << "\n";
+    std::cout << "\n\n";
     constexpr TreeType target1 = 5;
     constexpr TreeType target2 = 55;
 
@@ -221,7 +230,7 @@ void TestQueries(Node<T>* root)
     std::cout << "Tree max depth = " << Algorithms::MaxDepth(root) << '\n';
 
     Node<T>* inverted = Algorithms::GetInveredtTree(root);
-    std::cout << "layers of inverted:\n";
+    std::cout << "\nlayers of inverted:\n";
     Algorithms::BreadthFirstSearchLayers(inverted);
 
     std::cout << "is original the same as inverted - " << (Algorithms::IsSameTree(root, inverted) ? "true" : "false") << '\n';

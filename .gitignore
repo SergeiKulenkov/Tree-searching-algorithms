@@ -1,6 +1,9 @@
 /.vs
 /Binaries
+/Scripts/__pycache__
+/Vendor/premake/bin/
 *.vcxproj
 *.vcxproj.user
 *.vcxproj.filters
 *.sln
+*.slnx
